@@ -22,13 +22,19 @@ jobs:
         pip install -r requirements.txt
 
     - name: Lint with pylint
-      run: PYTHONPATH=. pylint src tests
+      run: |
+        $env:PYTHONPATH = "."
+        pylint src tests
 
     - name: Type check with mypy
-      run: PYTHONPATH=. mypy src
+      run: |
+        $env:PYTHONPATH = "."
+        mypy src
 
     - name: Security check with bandit
       run: bandit -r src
 
     - name: Run tests
-      run: PYTHONPATH=. pytest tests
+      run: |
+        $env:PYTHONPATH = "."
+        pytest tests
