@@ -79,6 +79,19 @@ Current runner version: '2.328.0'
 ```
 
 
+
+```
+PS C:\Users\xxx\actions-runner> ./run.cmd
+        1 個のファイルをコピーしました。
+
+√ Connected to GitHub
+
+Current runner version: '2.328.0'
+2025-09-01 04:55:25Z: Listening for Jobs
+2025-09-01 05:00:07Z: Running job: build
+2025-09-01 05:03:09Z: Job build completed with result: Failed
+```
+
 ---
 #### GitHub Actionsワークフロー例（.github/workflows/ci.yml）
 
@@ -91,32 +104,38 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, windows]
 
     steps:
-    - uses: actions/checkout@v4  # リポジトリのソースコードを取得
+    - uses: actions/checkout@v4
 
-    - name: Set up Python  # Python 3.11をセットアップ
+    - name: Set up Python
       uses: actions/setup-python@v5
       with:
         python-version: '3.11'
 
-    - name: Install dependencies  # 依存パッケージをインストール
+    - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
-    - name: Lint with pylint  # コードの静的解析
-      run: PYTHONPATH=. pylint src tests
+    - name: Lint with pylint
+      run: |
+        $env:PYTHONPATH = "."
+        pylint src tests
 
-    - name: Type check with mypy  # 型チェック
-      run: PYTHONPATH=. mypy src
+    - name: Type check with mypy
+      run: |
+        $env:PYTHONPATH = "."
+        mypy src
 
-    - name: Security check with bandit  # セキュリティチェック
+    - name: Security check with bandit
       run: bandit -r src
 
-    - name: Run tests  # テスト実行
-      run: PYTHONPATH=. pytest tests
+    - name: Run tests
+      run: |
+        $env:PYTHONPATH = "."
+        pytest tests
 ```
 
 
